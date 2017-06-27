@@ -1,0 +1,63 @@
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+class Bus {
+	private final boolean[] seats = new boolean[3];
+	private int nextSeat = 0;
+
+	public void bookSeat() throws Exception {
+		if (nextSeat < seats.length) {
+			seats[nextSeat] = true;
+			nextSeat++;
+			System.out.print("Seat number " + nextSeat + " booked");
+		} 
+	}
+}
+
+class Passenger extends Thread {
+
+	Bus bus;
+	String passengerName;
+
+	public Passenger(Bus bus, String passengerName) {
+		this.bus = bus;
+		this.passengerName = passengerName;
+	}
+
+	public void run() {
+		synchronized (bus) {
+			try {
+				bus.bookSeat();
+				Thread.sleep(500);
+			} catch (Exception ex) {
+				Logger.getLogger(Passenger.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			System.out.println("by " + passengerName);
+      }
+	}
+	public String getPassengerName() {
+		return passengerName;
+	}
+
+	public void setPassengerName(String passengerName) {
+		this.passengerName = passengerName;
+	}
+}
+public class Main {
+	public static void main(String[] args) throws InterruptedException {
+		Bus someCompany = new Bus();
+		Scanner sc=new Scanner(System.in);
+		String name1=sc.nextLine();
+		String name2=sc.nextLine();
+		String name3=sc.nextLine();
+		
+		Passenger p1 = new Passenger(someCompany, name1);
+		Passenger p2 = new Passenger(someCompany, name2);
+		Passenger p3 = new Passenger(someCompany, name3);
+
+		p1.start();
+		p2.start();
+		p3.start();
+	}
+}
